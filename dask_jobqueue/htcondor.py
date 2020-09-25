@@ -94,6 +94,10 @@ Queue
         if self.job_extra:
             self.job_header_dict.update(self.job_extra)
 
+        if scheduler:
+            self.submit_command += " -name " + shlex.quote(scheduler)
+            self.cancel_command += " -name " + shlex.quote(scheduler)
+
     def env_lines_to_dict(self, env_lines):
         """ Convert an array of export statements (what we get from env-extra
         in the config) into a dict """
@@ -215,6 +219,8 @@ class HTCondorCluster(JobQueueCluster):
     ----------
     disk : str
         Total amount of disk per job
+    schedd : str
+        Submit to the specified condor_schedd
     job_extra : dict
         Extra submit file attributes for the job
     {job}
