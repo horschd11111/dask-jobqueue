@@ -40,6 +40,7 @@ Queue
         disk=None,
         job_extra=None,
         config_name=None,
+        schedd=None,
         **base_class_kwargs
     ):
         super().__init__(
@@ -94,9 +95,12 @@ Queue
         if self.job_extra:
             self.job_header_dict.update(self.job_extra)
 
-        if scheduler:
-            self.submit_command += " -name " + shlex.quote(scheduler)
-            self.cancel_command += " -name " + shlex.quote(scheduler)
+        if schedd is None:
+            schedd = dask.config.get("jobqueue.%s.schedd" % config_name, None)
+
+        if schedd:
+            self.submit_command += " -name " + shlex.quote(schedd)
+            self.cancel_command += " -name " + shlex.quote(schedd)
 
     def env_lines_to_dict(self, env_lines):
         """ Convert an array of export statements (what we get from env-extra
